@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Переводчик с «Бобовии»</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #1a1a2e;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: #2d2d44;
+            border-radius: 32px;
+            padding: 40px 35px;
+            max-width: 720px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid #4a4a6a;
+        }
+        h1 {
+            color: #f0eae3;
+            font-weight: 500;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            margin-top: 0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h1 small {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #b6ad9e;
+            margin-left: auto;
+        }
+        .sub {
+            color: #b6ad9e;
+            border-left: 3px solid #6bcbf5;
+            padding-left: 16px;
+            font-size: 0.95rem;
+            margin-bottom: 28px;
+        }
+        textarea {
+            width: 100%;
+            background: #1a1a2e;
+            border: 1px solid #3f3f5a;
+            border-radius: 20px;
+            padding: 18px 20px;
+            font-size: 1.1rem;
+            color: #f0eae3;
+            resize: vertical;
+            min-height: 120px;
+            outline: none;
+            transition: 0.15s;
+            line-height: 1.6;
+        }
+        textarea:focus {
+            border-color: #6bcbf5;
+            box-shadow: 0 0 0 3px rgba(107, 203, 245, 0.2);
+        }
+        textarea::placeholder {
+            color: #6b6b8a;
+            font-weight: 300;
+        }
+        .row {
+            display: flex;
+            gap: 14px;
+            margin: 22px 0 18px;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #6bcbf5;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #1a1a2e;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            flex: 1 1 auto;
+            justify-content: center;
+            box-shadow: 0 4px 0 #3f8db0;
+            border: 1px solid #8dd8f5;
+        }
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #3f8db0;
+        }
+        button.secondary {
+            background: #3f3f5a;
+            color: #ddd;
+            box-shadow: 0 4px 0 #26263a;
+            border-color: #5a5a78;
+        }
+        button.secondary:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #26263a;
+        }
+        .output-box {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 18px 20px;
+            margin-top: 8px;
+            border: 1px solid #3f3f5a;
+            min-height: 80px;
+            color: #f0eae3;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+        .output-label {
+            color: #b6ad9e;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            margin-top: 16px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .output-label span {
+            background: #3f3f5a;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #ccc;
+        }
+        .footer-note {
+            color: #5f5f7a;
+            margin-top: 24px;
+            font-size: 0.8rem;
+            text-align: center;
+            border-top: 1px solid #3a3a52;
+            padding-top: 18px;
+        }
+        .hint {
+            color: #8a8aaa;
+            font-size: 0.85rem;
+            margin: 10px 0 0;
+            padding: 8px 12px;
+            background: #22223a;
+            border-radius: 12px;
+            border-left: 3px solid #6bcbf5;
+        }
+        @media (max-width: 480px) {
+            .card { padding: 24px 18px; }
+            h1 { font-size: 1.6rem; flex-wrap: wrap; }
+            button { padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>
+            🫘 Бобовия → Русский
+            <small>обратный перевод</small>
+        </h1>
+        <div class="sub">расшифровка языка «Бобовия» в обычный русский текст</div>
+
+        <textarea id="inputText" placeholder="Введите текст на Бобовии...">А-Бо Е-Ел Л-Ло Ор Ор! Д-Боб Ра А-Бо З-Зук Со-?</textarea>
+
+        <div class="row">
+            <button id="translateBtn">🔄 Расшифровать</button>
+            <button id="clearBtn" class="secondary">✕ Очистить</button>
+        </div>
+
+        <div class="output-label">
+            <span>📖 русский перевод</span>
+            <span id="charCount">0 символов</span>
+        </div>
+        <div class="output-box" id="outputText">—</div>
+        
+        <div class="hint">
+            💡 Подсказка: слова в Бобовии пишутся через дефис (например, «А-Бо» = «а», «Е-Ел» = «е»)
+        </div>
+        <div class="footer-note">обратный словарь «Бобовия» • всё в одном файле</div>
+    </div>
+
+    <script>
+        (function() {
+            // ----- СЛОВАРЬ БОБОВИЯ → РУССКИЙ -----
+            const reverseDict = new Map([
+                ['А-Бо', 'а'],
+                ['Б-Бе', 'б'],
+                ['В-Со', 'в'],
+                ['Г-Кар', 'г'],
+                ['Д-Боб', 'д'],
+                ['Е-Ел', 'е'],
+                ['Ё-Йо', 'ё'],
+                ['Ж-Жир', 'ж'],
+                ['З-Зук', 'з'],
+                ['И-Иш', 'и'],
+                ['Й-Йоп', 'й'],
+                ['К-Ак', 'к'],
+                ['Л-Ло', 'л'],
+                ['М-Ми', 'м'],
+                ['Н-Не', 'н'],
+                ['О-Ор', 'о'],
+                ['П-Пи', 'п'],
+                ['Р-Ра', 'р'],
+                ['С-Сер', 'с'],
+                ['Т-Тур', 'т'],
+                ['У-Ука', 'у'],
+                ['Ф-Фи', 'ф'],
+                ['Х-Хуй', 'х'],
+                ['Ц-Цэ', 'ц'],
+                ['Ч-Чут', 'ч'],
+                ['Ш-Шлю', 'ш'],
+                ['Щ-Щла', 'щ'],
+                ['Ъ-Й', 'ъ'],
+                ['Ы-Ыр', 'ы'],
+                ['Ь-Е', 'ь'],
+                ['Э-Эр', 'э'],
+                ['Ю-Юл', 'ю'],
+                ['Я-Ч', 'я']
+            ]);
+
+            // Также добавим варианты с маленькой буквы (если вдруг)
+            // Но по словарю все с большой, добавим для надёжности с маленькой
+            const reverseDictLower = new Map();
+            for (const [key, value] of reverseDict) {
+                reverseDictLower.set(key.toLowerCase(), value);
+            }
+            // Объединяем
+            const fullReverseDict = new Map([...reverseDict, ...reverseDictLower]);
+
+            // Функция для поиска с учётом регистра первой буквы
+            function findRussianWord(bobWord) {
+                // Пробуем как есть
+                if (fullReverseDict.has(bobWord)) {
+                    return fullReverseDict.get(bobWord);
+                }
+                // Пробуем с маленькой первой буквы
+                const lower = bobWord.charAt(0).toLowerCase() + bobWord.slice(1);
+                if (fullReverseDict.has(lower)) {
+                    return fullReverseDict.get(lower);
+                }
+                // Пробуем все в верхнем регистре
+                const upper = bobWord.toUpperCase();
+                if (fullReverseDict.has(upper)) {
+                    return fullReverseDict.get(upper);
+                }
+                return null;
+            }
+
+            // ----- ОСНОВНАЯ ФУНКЦИЯ ПЕРЕВОДА -----
+            function translateFromBobovia(text) {
+                if (!text || text.trim() === '') return '';
+
+                // Разбиваем текст на слова и не-слова
+                const resultParts = [];
+                // Ищем слова, которые выглядят как "А-Бо" или "а-бо" (буква-дефис-буквы)
+                // Но также могут быть просто слова без дефиса (оставляем как есть)
+                const regex = /([А-Яа-яЁё]+-[А-Яа-яЁё]+)|([^А-Яа-яЁё-]+)|([А-Яа-яЁё]+)/g;
+                let match;
+                while ((match = regex.exec(text)) !== null) {
+                    const bobWord = match[1]; // слово с дефисом (А-Бо)
+                    const nonWord = match[2]; // не буквы (пробелы, пунктуация)
+                    const simpleWord = match[3]; // слово без дефиса
+
+                    if (bobWord) {
+                        // Это слово на Бобовии - пытаемся перевести
+                        const russian = findRussianWord(bobWord);
+                        if (russian) {
+                            // Сохраняем регистр первой буквы, если исходное слово было с заглавной
+                            if (bobWord.charAt(0) === bobWord.charAt(0).toUpperCase()) {
+                                resultParts.push(russian.charAt(0).toUpperCase() + russian.slice(1));
+                            } else {
+                                resultParts.push(russian);
+                            }
+                        } else {
+                            // Если не нашли - оставляем как есть
+                            resultParts.push(bobWord);
+                        }
+                    } else if (nonWord) {
+                        resultParts.push(nonWord);
+                    } else if (simpleWord) {
+                        // Слово без дефиса - возможно это часть Бобовии без дефиса?
+                        // Проверяем, может это одно из слов словаря без дефиса?
+                        const found = findRussianWord(simpleWord);
+                        if (found) {
+                            if (simpleWord.charAt(0) === simpleWord.charAt(0).toUpperCase()) {
+                                resultParts.push(found.charAt(0).toUpperCase() + found.slice(1));
+                            } else {
+                                resultParts.push(found);
+                            }
+                        } else {
+                            // Ищем по частям? Слишком сложно, просто оставляем
+                            resultParts.push(simpleWord);
+                        }
+                    }
+                }
+
+                return resultParts.join('');
+            }
+
+            // ----- DOM элементы -----
+            const inputEl = document.getElementById('inputText');
+            const outputEl = document.getElementById('outputText');
+            const translateBtn = document.getElementById('translateBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const charCount = document.getElementById('charCount');
+
+            function updateTranslation() {
+                const source = inputEl.value;
+                charCount.textContent = source.length + ' симв.';
+
+                if (source.trim() === '') {
+                    outputEl.textContent = '—';
+                    return;
+                }
+
+                const translated = translateFromBobovia(source);
+                outputEl.textContent = translated;
+            }
+
+            translateBtn.addEventListener('click', updateTranslation);
+
+            clearBtn.addEventListener('click', function() {
+                inputEl.value = '';
+                outputEl.textContent = '—';
+                charCount.textContent = '0 симв.';
+                inputEl.focus();
+            });
+
+            inputEl.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    updateTranslation();
+                }
+            });
+
+            window.addEventListener('DOMContentLoaded', function() {
+                updateTranslation();
+            });
+        })();
+    </script>
+</body>
+</html>
